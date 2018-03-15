@@ -1,3 +1,12 @@
+/* -----------------------------------------------
+/* Author : jiangbaojun
+/* Demo
+/* GitHub : https://github.com/jiangbaojun/mrk-tree-transform.git
+/* How to use? : Check the GitHub README
+/* v1.0
+/* ----------------------------------------------- */
+
+
 (function (window){
 	var handle = {
 		_treeToFlat: function(data, options) {
