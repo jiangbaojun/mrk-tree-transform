@@ -3,7 +3,7 @@
 <head>
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<script type="text/javascript" src="tree-transform.js"></script>
+	<script type="text/javascript" src="mrk-tree-transform.js"></script>
 </head>
 <body>
 	<h3>扁平树数据必须是一个jsonArray</h3>
@@ -22,7 +22,7 @@
 		];
 		<br/>
 		<br/>
-		//标准树data<br/>
+		//标准树data-数组<br/>
 		var treeData = [
 			{
 				'Id': '1',
@@ -54,7 +54,37 @@
 				'Id': '2',
 				'Name': '英国'
 			}
-		]
+		];
+		<br/>
+		<br/>
+		//标准树data-对象<br/>
+		var treeDataObj = {
+			'Id': '1',
+			'Name': '中国',
+			'children': [{
+					'Id': '4DDA93E00CD34E4D812EC1A9E10AA883',
+					'Name': '河北',
+					'children': [{
+							'Id': '6CD3A04CFBC1419F81E1A66BDC81F177',
+							'Name': '承德',
+						}, {
+							'Id': 'B93352644544420782337BC41C0534A9',
+							'Name': '石家庄',
+							'children': {
+								'Id': 'SF789Y3489RSDFJ8394TR03RFW23',
+								'Name': '长安区',
+							}
+						}
+					]
+				}, {
+					'Id': '68F89C4E368048E699F3D7EDD69A86A7',
+					'Name': '江苏',
+				}, {
+					'Id': 'CF31D0CA5BC34765A61909B296E470C6',
+					'Name': '山东',
+				}
+			]
+		}
 	</p>
 	<script>
 	//扁平树data
@@ -68,7 +98,7 @@
 		{Id: "68F89C4E368048E699F3D7EDD69A86A7", Name: "江苏", pid: "1"},
 		{Id: "CF31D0CA5BC34765A61909B296E470C6", Name: "山东", pid: "1"}
 	];
-	//标准树data
+	//标准树data-数组
 	var treeData = [
 		{
 			'Id': '1',
@@ -101,10 +131,40 @@
 			'Name': '英国'
 		}
 	]
+	//标准树data-对象
+	var treeDataObj = {
+		'Id': '1',
+		'Name': '中国',
+		'children': [{
+				'Id': '4DDA93E00CD34E4D812EC1A9E10AA883',
+				'Name': '河北',
+				'children': [{
+						'Id': '6CD3A04CFBC1419F81E1A66BDC81F177',
+						'Name': '承德',
+					}, {
+						'Id': 'B93352644544420782337BC41C0534A9',
+						'Name': '石家庄',
+						'children': {
+							'Id': 'SF789Y3489RSDFJ8394TR03RFW23',
+							'Name': '长安区',
+						}
+					}
+				]
+			}, {
+				'Id': '68F89C4E368048E699F3D7EDD69A86A7',
+				'Name': '江苏',
+			}, {
+				'Id': 'CF31D0CA5BC34765A61909B296E470C6',
+				'Name': '山东',
+			}
+		]
+	}
 	//扁平数据转标准数据
 	console.log(flatToTree(flatData, {idName:"Id", pidName:"pid", childrenName:"children"}));  
-	//标准数据转扁平数据
+	//标准数据（数组）转扁平数据
 	console.log(treeToFlat(treeData, {idName:"Id", pidName:"pid", childrenName:"children", parentId:""}));
+	//标准数据（对象）转扁平数据
+	console.log(treeToFlat(treeDataObj, {idName:"Id", pidName:"pid", childrenName:"children", parentId:""}));
 		
 	</script>
 	
