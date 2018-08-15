@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.alibaba.fastjson.JSON;
@@ -26,21 +27,21 @@ public class TreeDataUtils {
 	
 	public static void main(String[] args) {
 		//FLAT TO TREE
-//		List<HashMap<String, Object>> list = getFlatData();
+//		List<Map<String, Object>> list = getFlatData();
 //		System.out.println(list);
-//		List<HashMap<String, Object>> result = flatToTree(list,"Id","pid","children");
+//		List<Map<String, Object>> result = flatToTree(list,"Id","pid","children");
 //		System.out.println(result);
 //		
 		//LIST TREE TO FLAT
-//		List<HashMap<String, Object>> list = getListTreeData();
+//		List<Map<String, Object>> list = getListTreeData();
 //		System.out.println(list);
-//		List<HashMap<String, Object>> result = treeToFlat(list,"-1","Id","pid","children");
+//		List<Map<String, Object>> result = treeToFlat(list,"-1","Id","pid","children");
 //		System.out.println(result);
 		
 		//OBJECT TREE TO FLAT
 //		HashMap<String, Object> map = getObjectTreeData();
 //		System.out.println(map);
-//		List<HashMap<String, Object>> result = treeToFlat(map,"-1","Id","pid","children");
+//		List<Map<String, Object>> result = treeToFlat(map,"-1","Id","pid","children");
 //		System.out.println(result);
 		
 	}
@@ -56,7 +57,7 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> treeToFlat(List<HashMap<String, Object>> list){
+	public static List<Map<String, Object>> treeToFlat(List<Map<String, Object>> list){
 		return treeToFlat(list,TOP_PID_VALUE,T_ID,T_PID,T_CHILDRENNAME);
 	}
 	
@@ -71,7 +72,7 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> treeToFlat(HashMap<String, Object> map){
+	public static List<Map<String, Object>> treeToFlat(HashMap<String, Object> map){
 		return treeToFlat(map,TOP_PID_VALUE,T_ID,T_PID,T_CHILDRENNAME);
 	}
 	/**
@@ -89,8 +90,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> treeToFlat(List<HashMap<String, Object>> list, String parentId, String id, String pid, String childrenName){
-		List<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
+	public static List<Map<String, Object>> treeToFlat(List<Map<String, Object>> list, String parentId, String id, String pid, String childrenName){
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		for(int i=0;i<list.size();i++) {
 			result.addAll(mapToFlat(list.get(i),parentId,id,pid,childrenName,null));
 		}
@@ -113,8 +114,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> treeToFlat(HashMap<String, Object> map, String parentId, String id, String pid, String childrenName){
-		List<HashMap<String, Object>> result = mapToFlat(map,parentId,id,pid,childrenName,null);
+	public static List<Map<String, Object>> treeToFlat(HashMap<String, Object> map, String parentId, String id, String pid, String childrenName){
+		List<Map<String, Object>> result = mapToFlat(map,parentId,id,pid,childrenName,null);
 		return result;
 	}
 	
@@ -127,11 +128,11 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	private static List<HashMap<String, Object>> mapToFlat(HashMap<String, Object> map, String parentId, String id, String pid, String childrenName, List<HashMap<String, Object>> result){
+	private static List<Map<String, Object>> mapToFlat(Map<String, Object> map, String parentId, String id, String pid, String childrenName, List<Map<String, Object>> result){
 		if(id==null) id = T_ID;
 		if(pid==null) pid = T_PID;
 		if(childrenName==null) childrenName = T_CHILDRENNAME;
-		if(result==null) result = new ArrayList<HashMap<String, Object>>();
+		if(result==null) result = new ArrayList<Map<String, Object>>();
 		
 		HashMap<String, Object> node = new HashMap<String, Object>();
 		
@@ -149,7 +150,7 @@ public class TreeDataUtils {
 		//处理子节点数据
 		Object obj = map.get(childrenName);
 		if(obj instanceof List) {
-			List<HashMap<String, Object>> childrenList = (List<HashMap<String, Object>>) obj;
+			List<Map<String, Object>> childrenList = (List<Map<String, Object>>) obj;
 			for(int i=0;i<childrenList.size();i++) {
 				mapToFlat(childrenList.get(i),(String)map.get(id),id,pid,childrenName,result);
 			}
@@ -162,7 +163,8 @@ public class TreeDataUtils {
 	
 	/**
 	 * 扁平树形数据->转换->标准树形数据.	扁平树形数据-id节点属性名称，默认id,扁平树形数据-父id节点属性名称，默认pid,生成的标准树形数据-子节点的属性名称，默认children
-	 * @param jsonArr	json数组，java格式规范：List<HashMap<String, Object>>
+	 * @param jsonArr	json数组，java格式规范：List<Map<String, Object>>
+	 * @param options	需要添加的字段，{新字段key:需要使用的值对应的现有key}
 	 * @return		标准树形数据
 	 * @Author		姜宝俊
 	 * @Group 		技术组
@@ -171,9 +173,9 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> flatToTree(JSONArray jsonArr){
-		List<HashMap<String, Object>> tlist = transferData(jsonArr);
-		return flatToTree(tlist,T_ID,T_PID,T_CHILDRENNAME);
+	public static List<Map<String, Object>> flatToTree(JSONArray jsonArr, Map<String,String> options){
+		List<Map<String, Object>> tlist = transferData(jsonArr);
+		return flatToTree(tlist,T_ID,T_PID,T_CHILDRENNAME,options);
 	}
 	
 	/**
@@ -182,6 +184,7 @@ public class TreeDataUtils {
 	 * @param id	扁平树形数据-id节点属性名称，默认id
 	 * @param pid	扁平树形数据-父id节点属性名称，默认pid
 	 * @param childrenName	生成的标准树形数据-子节点的属性名称，默认children
+	 * @param options	需要添加的字段，{新字段key:需要使用的值对应的现有key}
 	 * @return		标准树形数据
 	 * @Author		姜宝俊
 	 * @Group 		技术组
@@ -190,14 +193,15 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> flatToTree(JSONArray jsonArr, String id, String pid, String childrenName){
-		List<HashMap<String, Object>> tlist = transferData(jsonArr);
-		return flatToTree(tlist,id,pid,childrenName);
+	public static List<Map<String, Object>> flatToTree(JSONArray jsonArr, String id, String pid, String childrenName, Map<String,String> options){
+		List<Map<String, Object>> tlist = transferData(jsonArr);
+		return flatToTree(tlist,id,pid,childrenName,options);
 	}
 	
 	/**
 	 * 扁平树形数据->转换->标准树形数据.	扁平树形数据-id节点属性名称，默认id,扁平树形数据-父id节点属性名称，默认pid,生成的标准树形数据-子节点的属性名称，默认children
 	 * @param list	扁平树形数据
+	 * @param options	需要添加的字段，{新字段key:需要使用的值对应的现有key}
 	 * @return		标准树形数据
 	 * @Author		姜宝俊
 	 * @Group 		技术组
@@ -206,8 +210,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> flatToTree(List<HashMap<String, Object>> list){
-		return flatToTree(list,T_ID,T_PID,T_CHILDRENNAME);
+	public static List<Map<String, Object>> flatToTree(List<Map<String, Object>> list, Map<String,String> options){
+		return flatToTree(list,T_ID,T_PID,T_CHILDRENNAME,options);
 	}
 	
 	/**
@@ -216,6 +220,7 @@ public class TreeDataUtils {
 	 * @param id	扁平树形数据-id节点属性名称，默认id
 	 * @param pid	扁平树形数据-父id节点属性名称，默认pid
 	 * @param childrenName	生成的标准树形数据-子节点的属性名称，默认children
+	 * @param options	需要添加的字段，{新字段key:需要使用的值对应的现有key}
 	 * @return		标准树形数据
 	 * @Author		姜宝俊
 	 * @Group 		技术组
@@ -224,8 +229,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	public static List<HashMap<String, Object>> flatToTree(List<HashMap<String, Object>> list, String id, String pid, String childrenName){
-		List<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
+	public static List<Map<String, Object>> flatToTree(List<Map<String, Object>> list, String id, String pid, String childrenName, Map<String,String> options){
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		if(id==null) id = T_ID;
 		if(pid==null) pid = T_PID;
 		if(childrenName==null) childrenName = T_CHILDRENNAME;
@@ -233,7 +238,7 @@ public class TreeDataUtils {
 			return result;
 		}
 		//创建临时映射(节点id：节点)
-		HashMap<String, HashMap<String, Object>> tmpMap = new HashMap<String, HashMap<String, Object>>();
+		Map<String, Map<String, Object>> tmpMap = new HashMap<String, Map<String, Object>>();
 		for(int i=0;i<list.size();i++) {
 			//节点id
 			Object o = list.get(i).get(id);
@@ -245,19 +250,19 @@ public class TreeDataUtils {
 		}
 		//设置children节点
 		for(int i=0;i<list.size();i++) {
-			HashMap<String, Object> currentNode = list.get(i);
+			Map<String, Object> currentNode = list.get(i);
 			//当前父节点
 			Object parentKeyObj = list.get(i).get(pid);
-			HashMap<String, Object> parentNode = null;
+			Map<String, Object> parentNode = null;
 			if(parentKeyObj!=null) {
 				parentNode = tmpMap.get(parentKeyObj.toString());
 			}
 			//判断父节点是否存在,不存在证明是根节点
 			if(parentNode != null) {
 				//初始化children子节点属性对象值
-				ArrayList<HashMap<String, Object>> childrenList = (ArrayList<HashMap<String, Object>>) parentNode.get(childrenName);
+				ArrayList<Map<String, Object>> childrenList = (ArrayList<Map<String, Object>>) parentNode.get(childrenName);
 				if(childrenList==null) {
-					childrenList = new ArrayList<HashMap<String, Object>>();
+					childrenList = new ArrayList<Map<String, Object>>();
 					parentNode.put(childrenName, childrenList);
 				}
 				//设置子节点
@@ -265,6 +270,15 @@ public class TreeDataUtils {
 			}else {
 				result.add(list.get(i));
 			}
+			//添加options字段
+			if(currentNode!=null && options!=null) {
+				for (Entry<String, String> entry : options.entrySet()) { 
+					String key = entry.getKey();
+					String value = entry.getValue();
+					currentNode.put(key, currentNode.get(value));
+				}
+			}
+			
 		}
 		return result;
 	}
@@ -280,8 +294,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	private static List<HashMap<String, Object>> backErr(String info) {
-		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+	private static List<Map<String, Object>> backErr(String info) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("info",info);
 		list.add(map);
@@ -299,8 +313,8 @@ public class TreeDataUtils {
 	 * @Company		Vstsoft
 	 * @version 	V1.0
 	 */
-	private static List<HashMap<String, Object>> transferData(JSONArray jsonArr) {
-		List<HashMap<String, Object>> tlist = new ArrayList<HashMap<String, Object>>();
+	private static List<Map<String, Object>> transferData(JSONArray jsonArr) {
+		List<Map<String, Object>> tlist = new ArrayList<Map<String, Object>>();
 		try {
 			for(int i=0;i<jsonArr.size();i++) {
 				Object map = jsonArr.get(i);
@@ -315,8 +329,8 @@ public class TreeDataUtils {
 	}
 	
 	//扁平数据
-	private static List<HashMap<String, Object>> getFlatData() {
-		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+	private static List<Map<String, Object>> getFlatData() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		HashMap<String, Object> m1 = new HashMap<String, Object>();
 		HashMap<String, Object> m2 = new HashMap<String, Object>();
 		HashMap<String, Object> m3 = new HashMap<String, Object>();
@@ -337,8 +351,8 @@ public class TreeDataUtils {
 		return list;
 	}
 	//数组树形数据
-	private static List<HashMap<String, Object>> getListTreeData() {
-		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+	private static List<Map<String, Object>> getListTreeData() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		HashMap<String, Object> m1 = new HashMap<String, Object>();
 		HashMap<String, Object> m2 = new HashMap<String, Object>();
 		HashMap<String, Object> m11 = new HashMap<String, Object>();
@@ -356,11 +370,11 @@ public class TreeDataUtils {
 		m12.put("Id","68F89C4E368048E699F3D7EDD69A86A7");m12.put("Name","江苏");
 		m13.put("Id","CF31D0CA5BC34765A61909B296E470C6");m13.put("Name","山东");
 		
-		List<HashMap<String, Object>> provences = new ArrayList<HashMap<String, Object>>();
+		List<Map<String, Object>> provences = new ArrayList<Map<String, Object>>();
 		provences.add(m11);provences.add(m12);provences.add(m13);
 		m1.put("children",provences);
 		
-		List<HashMap<String, Object>> cities = new ArrayList<HashMap<String, Object>>();
+		List<Map<String, Object>> cities = new ArrayList<Map<String, Object>>();
 		cities.add(m111);cities.add(m112);
 		m11.put("children",cities);
 		
@@ -388,11 +402,11 @@ public class TreeDataUtils {
 		m12.put("Id","68F89C4E368048E699F3D7EDD69A86A7");m12.put("Name","江苏");
 		m13.put("Id","CF31D0CA5BC34765A61909B296E470C6");m13.put("Name","山东");
 		
-		List<HashMap<String, Object>> provences = new ArrayList<HashMap<String, Object>>();
+		List<Map<String, Object>> provences = new ArrayList<Map<String, Object>>();
 		provences.add(m11);provences.add(m12);provences.add(m13);
 		m1.put("children",provences);
 		
-		List<HashMap<String, Object>> cities = new ArrayList<HashMap<String, Object>>();
+		List<Map<String, Object>> cities = new ArrayList<Map<String, Object>>();
 		cities.add(m111);cities.add(m112);
 		m11.put("children",cities);
 		
